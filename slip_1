@@ -1,0 +1,49 @@
+1.
+# Step 1: Import libraries
+import pandas as pd
+from mlxtend.preprocessing import TransactionEncoder
+from mlxtend.frequent_patterns import apriori, association_rules
+
+# Step 2: Our groceries dataset (list of transactions)
+dataset = [
+    ['milk', 'bread', 'butter'],
+    ['bread', 'butter', 'jam'],
+    ['milk', 'bread'],
+    ['milk', 'bread', 'butter', 'jam'],
+    ['bread', 'butter']
+]
+
+# Step 3: Convert dataset to the proper format
+te = TransactionEncoder()
+te_ary = te.fit(dataset).transform(dataset)
+df = pd.DataFrame(te_ary, columns=te.columns_)
+
+# Step 4: Apply Apriori algorithm
+frequent_itemsets = apriori(df, min_support=0.25, use_colnames=True)
+
+# Step 5: Show the frequent itemsets
+print("Frequent Itemsets:")
+print(frequent_itemsets)
+
+# Step 6: Find association rules
+rules = association_rules(frequent_itemsets, metric="support", min_threshold=0.25)
+print("\nAssociation Rules:")
+print(rules)
+
+
+2.
+import pandas as pd
+import seaborn as sns
+import matplotlib.pyplot as plt
+from sklearn.datasets import load_iris
+# Load Iris dataset
+iris = load_iris()
+df = pd.DataFrame(iris.data, columns=iris.feature_names)
+df['species'] = iris.target  # Adding target as species column
+plt.figure(figsize=(8, 6))
+sns.scatterplot(x=df['sepal length (cm)'], y=df['petal length (cm)'], hue=df['species'], palette="viridis")
+plt.title("Scatter Plot of Sepal Length vs. Petal Length")
+plt.xlabel("Sepal Length (cm)")
+plt.ylabel("Petal Length (cm)")
+plt.legend(title="Species")
+plt.show()
