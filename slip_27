@@ -1,0 +1,142 @@
+1.
+import pandas as pd
+from sklearn.linear_model import LinearRegression
+from sklearn.model_selection import train_test_split
+from sklearn.metrics import mean_squared_error
+
+# Dataset
+df = pd.DataFrame({
+    'Size':[1500,1800,2400,3000,3500,4000],
+    'Bedrooms':[3,4,4,5,5,6],
+    'Age':[10,15,20,25,30,35],
+    'Price':[400000,500000,600000,650000,700000,750000]
+})
+
+X, y = df[['Size','Bedrooms','Age']], df['Price']
+X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.2, random_state=42)
+
+# Train model
+model = LinearRegression().fit(X_train, y_train)
+
+# Predict
+y_pred = model.predict(X_test)
+print(f'MSE: {mean_squared_error(y_test, y_pred):.2f}')
+print("Predicted price for [2500,4,20]:", model.predict([[2500,4,20]])[0])
+------------------------------------
+2.
+import pandas as pd
+from sklearn.linear_model import LinearRegression
+
+# 1. Create a dummy dataset
+data = {
+    'Level': [1, 2, 3, 4, 5, 6, 7, 8, 9, 10],
+    'Salary': [45000, 50000, 60000, 80000, 110000, 150000, 200000, 300000, 500000, 1000000]
+}
+df = pd.DataFrame(data)
+print("Dummy Dataset:\n", df)
+
+# 2. Features and target
+X = df[['Level']]
+y = df['Salary']
+
+# 3. Train Simple Linear Regression
+model = LinearRegression()
+model.fit(X, y)
+
+# 4. Predict salaries for level 11 and 12
+predicted_salaries = model.predict([[11], [12]])
+print("\nPredicted Salaries for Level 11 and 12:", predicted_salaries)
+-----------------------------------------------------------------------------------------
+                    WITH CSV
+
+1.
+# Q1: Multiple Linear Regression on House Price Dataset
+
+import pandas as pd
+from sklearn.model_selection import train_test_split
+from sklearn.linear_model import LinearRegression
+
+# Step 1: Read CSV
+df = pd.read_csv("house_price.csv")
+
+# Step 2: Check and remove null values
+df = df.dropna()
+
+# Step 3: Independent and dependent variables
+X = df[['area', 'bedrooms', 'age']]
+y = df['price']
+
+# Step 4: Split into train & test
+X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.2, random_state=42)
+
+# Step 5: Train model
+model = LinearRegression()
+model.fit(X_train, y_train)
+
+# Step 6: Predict on test data
+y_pred = model.predict(X_test)
+
+print("Predicted Prices:\n", y_pred)
+
+# Example: Predict price of new house
+new_house = [[3000, 3, 10]]   # area, bedrooms, age
+print("Price of new house =", model.predict(new_house))
+
+----------------------------------------
+
+2.
+
+# Q2: Simple Linear Regression & Polynomial Regression
+
+import pandas as pd
+import numpy as np
+from sklearn.linear_model import LinearRegression
+from sklearn.preprocessing import PolynomialFeatures
+from sklearn.metrics import r2_score
+
+# Step 1: Read CSV
+df = pd.read_csv("Salary_positions.csv")
+
+# Step 2: Independent & dependent variables
+X = df[['Level']]
+y = df['Salary']
+
+# ---------------------------------------------
+# SIMPLE LINEAR REGRESSION
+# ---------------------------------------------
+lin_model = LinearRegression()
+lin_model.fit(X, y)
+
+# Predictions
+y_pred_lin = lin_model.predict(X)
+
+# ---------------------------------------------
+# POLYNOMIAL REGRESSION (degree = 4)
+# ---------------------------------------------
+poly = PolynomialFeatures(degree=4)
+X_poly = poly.fit_transform(X)
+
+poly_model = LinearRegression()
+poly_model.fit(X_poly, y)
+
+# Predictions
+y_pred_poly = poly_model.predict(X_poly)
+
+# ---------------------------------------------
+# Compare which fits better
+# ---------------------------------------------
+print("Linear Regression R2 Score =", r2_score(y, y_pred_lin))
+print("Polynomial Regression R2 Score =", r2_score(y, y_pred_poly))
+
+# ---------------------------------------------
+# Predict Salaries for Level 11 and 12
+# ---------------------------------------------
+level_11 = poly.transform([[11]])
+level_12 = poly.transform([[12]])
+
+print("\nPredicted Salary (Linear) for Level 11 =", lin_model.predict([[11]])[0])
+print("Predicted Salary (Linear) for Level 12 =", lin_model.predict([[12]])[0])
+
+print("\nPredicted Salary (Polynomial) for Level 11 =", poly_model.predict(level_11)[0])
+print("Predicted Salary (Polynomial) for Level 12 =", poly_model.predict(level_12)[0])
+
