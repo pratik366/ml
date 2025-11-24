@@ -68,5 +68,58 @@ plt.show()
  
 # 6. Display model prediction for test data
  print("Predicted House Prices:", y_pred)
+-------------------------------------------------------------------------------------
+WITH CSV
 
-2
+1.
+import pandas as pd
+from sklearn.cluster import KMeans
+import matplotlib.pyplot as plt
+
+# Step 1: Read dataset
+df = pd.read_csv("mall_customers.csv")
+
+# Step 2: Select features for clustering
+X = df[["Annual Income (k$)", "Spending Score (1-100)"]]
+
+# Step 3: Apply K-Means with 3 clusters (example)
+kmeans = KMeans(n_clusters=3)
+kmeans.fit(X)
+
+# Step 4: Add cluster labels to dataset
+df["Cluster"] = kmeans.labels_
+
+print(df.head())
+
+# Step 5: Scatter Plot of clusters
+plt.scatter(df["Annual Income (k$)"], df["Spending Score (1-100)"], c=df["Cluster"])
+plt.xlabel("Annual Income")
+plt.ylabel("Spending Score")
+plt.title("K-Means Clustering (Mall Customers)")
+plt.show()
+----------------
+2.
+import pandas as pd
+from sklearn.model_selection import train_test_split
+from sklearn.linear_model import LinearRegression
+
+# Step 1: Read dataset
+df = pd.read_csv("house_price.csv")
+
+# Step 2: Select feature and target
+X = df[["Area"]]    # Independent variable
+y = df["Price"]     # Dependent variable
+
+# Step 3: Split data
+X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.2)
+
+# Step 4: Create and train model
+model = LinearRegression()
+model.fit(X_train, y_train)
+
+# Step 5: Predict
+pred = model.predict(X_test)
+
+print("Predicted Prices:", pred)
+print("Model Accuracy (R2 Score):", model.score(X_test, y_test))
+
