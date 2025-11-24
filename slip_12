@@ -1,0 +1,118 @@
+1.
+from sklearn.datasets import load_iris
+from sklearn.model_selection import train_test_split
+from sklearn.neighbors import KNeighborsClassifier
+from sklearn.metrics import accuracy_score
+
+# Load dataset
+iris = load_iris()
+X, y = iris.data, iris.target
+
+# Train-test split
+X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.2, random_state=0)
+
+# Train KNN model
+knn = KNeighborsClassifier(n_neighbors=3)
+knn.fit(X_train, y_train)
+
+# Predict and evaluate
+y_pred = knn.predict(X_test)
+print("Accuracy:", accuracy_score(y_test, y_pred))
+print("Predicted Species:", y_pred)
+------------------------------------------------------
+2.
+import pandas as pd
+from sklearn.linear_model import LinearRegression
+
+# 1. Create a dummy dataset
+data = {
+    'Level': [1, 2, 3, 4, 5, 6, 7, 8, 9, 10],
+    'Salary': [45000, 50000, 60000, 80000, 110000, 150000, 200000, 300000, 500000, 1000000]
+}
+df = pd.DataFrame(data)
+print("Dummy Dataset:\n", df)
+
+# 2. Features and target
+X = df[['Level']]
+y = df['Salary']
+
+# 3. Train Simple Linear Regression
+model = LinearRegression()
+model.fit(X, y)
+
+# 4. Predict salaries for level 11 and 12
+predicted_salaries = model.predict([[11], [12]])
+print("\nPredicted Salaries for Level 11 and 12:", predicted_salaries)
+--------------------------------------------------------------------------------------------------
+                      With CSV
+
+2.
+import pandas as pd
+from sklearn.linear_model import LinearRegression
+from sklearn.preprocessing import PolynomialFeatures
+from sklearn.model_selection import train_test_split
+from sklearn.metrics import r2_score
+
+# Read the CSV file
+df = pd.read_csv("Salary_positions.csv")
+
+# Independent and dependent variables
+X = df[['Level']]
+y = df['Salary']
+
+# ---------------------------
+# SIMPLE LINEAR REGRESSION
+# ---------------------------
+
+X_train, X_test, y_train, y_test = train_test_split(
+    X, y, test_size=0.3, random_state=42
+)
+
+linear_model = LinearRegression()
+linear_model.fit(X_train, y_train)
+
+# Predictions for test data
+y_pred_linear = linear_model.predict(X_test)
+
+# Accuracy (R2 Score)
+linear_r2 = r2_score(y_test, y_pred_linear)
+print("Simple Linear Regression R2 Score:", linear_r2)
+
+# Predict salary for Level 11 and 12
+print("Linear Prediction for Level 11:", linear_model.predict([[11]])[0])
+print("Linear Prediction for Level 12:", linear_model.predict([[12]])[0])
+
+# ---------------------------
+# POLYNOMIAL REGRESSION
+# ---------------------------
+
+poly = PolynomialFeatures(degree=4)    # Degree 4 works best for this dataset
+X_poly = poly.fit_transform(X)
+
+X_train_p, X_test_p, y_train_p, y_test_p = train_test_split(
+    X_poly, y, test_size=0.3, random_state=42
+)
+
+poly_model = LinearRegression()
+poly_model.fit(X_train_p, y_train_p)
+
+# Predictions for test data
+y_pred_poly = poly_model.predict(X_test_p)
+
+# Accuracy
+poly_r2 = r2_score(y_test_p, y_pred_poly)
+print("Polynomial Regression R2 Score:", poly_r2)
+
+# Predict salary for Level 11 and 12 using polynomial model
+print("Polynomial Prediction for Level 11:", 
+      poly_model.predict(poly.transform([[11]]))[0])
+print("Polynomial Prediction for Level 12:", 
+      poly_model.predict(poly.transform([[12]]))[0])
+
+# ---------------------------
+# Compare models
+# ---------------------------
+if poly_r2 > linear_r2:
+    print("\nPolynomial Regression fits the data more accurately.")
+else:
+    print("\nSimple Linear Regression fits the data more accurately.")
