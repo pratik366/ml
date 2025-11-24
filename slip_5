@@ -85,3 +85,4 @@ pred = model.predict(X_test)
 
 print("Predicted CO2 Emissions:", pred)
 print("Model Accuracy (R2 Score):", model.score(X_test, y_test))
+ 
