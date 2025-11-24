@@ -1,0 +1,157 @@
+1.
+
+import pandas as pd
+from sklearn.linear_model import LinearRegression
+from sklearn.preprocessing import PolynomialFeatures
+from sklearn.metrics import r2_score
+
+# 1. Dummy Dataset (Salary_positions.csv style)
+data = {
+    'Level': [1,2,3,4,5,6,7,8,9,10],
+    'Salary':[45000,50000,60000,80000,110000,150000,200000,300000,500000,1000000]
+}
+
+df = pd.DataFrame(data)
+print("\nDataset:\n",df)
+
+# 2. Features & Target
+X = df[['Level']]
+y = df['Salary']
+
+# 3. Simple Linear Regression
+slr = LinearRegression()
+slr.fit(X,y)
+y_pred_slr = slr.predict(X)
+
+# 4. Polynomial Regression (degree=4)
+poly = PolynomialFeatures(degree=4)
+X_poly = poly.fit_transform(X)
+
+plr = LinearRegression()
+plr.fit(X_poly, y)
+y_pred_plr = plr.predict(X_poly)
+
+# 5. Compare using R² score
+print("\nR² Score - Simple Linear Regression:", r2_score(y, y_pred_slr))
+print("R² Score - Polynomial Regression:", r2_score(y, y_pred_plr))
+
+# 6. Predict Salaries for Level 11 and 12
+print("\nPredictions:")
+print("SLR Level 11 & 12:", slr.predict([[11],[12]]))
+
+X_new = poly.transform([[11],[12]])
+print("Polynomial Level 11 & 12:", plr.predict(X_new))
+--------------------
+2.
+import pandas as pd
+
+# 1. Create dataset with some null values
+data = {
+    'size': [1500, 2000, None, 2500, 3000],
+    'price': [300000, None, 500000, 600000, None]
+}
+df = pd.DataFrame(data)
+
+# 2. Find null values
+print("Null values in dataset:\n", df.isnull().sum())
+
+# 3. Remove null values
+df_clean = df.dropna()
+
+# 4. Display cleaned dataset
+print("\nDataset after removing null values:\n", df_clean)
+--------------------------------------------------------------------------
+                          WITH CSV
+
+1.
+
+import pandas as pd
+import numpy as np
+from sklearn.linear_model import LinearRegression
+from sklearn.preprocessing import PolynomialFeatures
+from sklearn.metrics import mean_squared_error
+from sklearn.model_selection import train_test_split
+
+# -----------------------------
+# Read CSV
+# -----------------------------
+df = pd.read_csv("Salary_positions.csv")   # file name
+
+X = df[['Level']]        # independent
+y = df['Salary']         # dependent
+
+# -----------------------------
+# Split train-test
+# -----------------------------
+X_train, X_test, y_train, y_test = train_test_split(
+    X, y, test_size=0.3, random_state=42
+)
+
+# -----------------------------
+# SIMPLE LINEAR REGRESSION
+# -----------------------------
+lin_model = LinearRegression()
+lin_model.fit(X_train, y_train)
+
+lin_pred = lin_model.predict(X_test)
+lin_mse = mean_squared_error(y_test, lin_pred)
+
+# -----------------------------
+# POLYNOMIAL REGRESSION (degree 4)
+# -----------------------------
+poly = PolynomialFeatures(degree=4)
+X_poly_train = poly.fit_transform(X_train)
+X_poly_test = poly.transform(X_test)
+
+poly_model = LinearRegression()
+poly_model.fit(X_poly_train, y_train)
+
+poly_pred = poly_model.predict(X_poly_test)
+poly_mse = mean_squared_error(y_test, poly_pred)
+
+# -----------------------------
+# Compare results
+# -----------------------------
+print("Simple Linear Regression MSE:", lin_mse)
+print("Polynomial Regression MSE:", poly_mse)
+
+if poly_mse < lin_mse:
+    print("Polynomial Regression fits more accurately.")
+else:
+    print("Simple Linear Regression fits more accurately.")
+
+# -----------------------------
+# Predict salary of Level 11 & 12
+# -----------------------------
+levels = np.array([[11], [12]])
+
+# simple model predictions
+lin_salary = lin_model.predict(levels)
+
+# polynomial model predictions
+levels_poly = poly.transform(levels)
+poly_salary = poly_model.predict(levels_poly)
+
+print("\nSimple Model Predictions:", lin_salary)
+print("Polynomial Model Predictions:", poly_salary)
+
+---------------------------------------
+2.
+
+import pandas as pd
+
+# Read CSV file
+df = pd.read_csv("data.csv")   # your dataset
+
+# Find null values
+print("Null Values in Dataset:")
+print(df.isnull().sum())
+
+# Remove rows containing null values
+df_clean = df.dropna()
+
+print("\nDataset after removing null values:")
+print(df_clean)
+
+# (Optional) Save clean dataset
+df_clean.to_csv("clean_data.csv", index=False)
