@@ -6,7 +6,7 @@ from sklearn.tree import DecisionTreeClassifier
 from sklearn.metrics import accuracy_score, classification_report
 import matplotlib.pyplot as plt
 from sklearn import tree
-
+ 
 # 1. Load the dataset
 # If you have downloaded the CSV from UCI, replace 'data_banknote_authentication.txt' with the path
 # Dataset columns: ['variance','skewness','curtosis','entropy','class']
