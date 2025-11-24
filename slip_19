@@ -1,0 +1,160 @@
+1.
+import pandas as pd
+from sklearn.linear_model import LinearRegression
+
+# 1. Create a dummy dataset
+data = {
+    'Level': [1, 2, 3, 4, 5, 6, 7, 8, 9, 10],
+    'Salary': [45000, 50000, 60000, 80000, 110000, 150000, 200000, 300000, 500000, 1000000]
+}
+df = pd.DataFrame(data)
+print("Dummy Dataset:\n", df)
+
+# 2. Features and target
+X = df[['Level']]
+y = df['Salary']
+
+# 3. Train Simple Linear Regression
+model = LinearRegression()
+model.fit(X, y)
+
+# 4. Predict salaries for level 11 and 12
+predicted_salaries = model.predict([[11], [12]])
+print("\nPredicted Salaries for Level 11 and 12:", predicted_salaries)
+-----------------------
+2.
+import pandas as pd
+from sklearn.model_selection import train_test_split
+from sklearn.naive_bayes import GaussianNB
+from sklearn.metrics import accuracy_score, confusion_matrix, classification_report
+
+# 1. Create a dummy weather dataset
+# Features: Outlook, Temperature, Humidity, Windy
+# Target: Play (Yes=1, No=0)
+data = {
+    'Outlook': ['Sunny','Sunny','Overcast','Rain','Rain','Rain','Overcast','Sunny','Sunny','Rain'],
+    'Temperature': ['Hot','Hot','Hot','Mild','Cool','Cool','Cool','Mild','Cool','Mild'],
+    'Humidity': ['High','High','High','High','Normal','Normal','Normal','High','Normal','High'],
+    'Windy': ['False','True','False','False','False','True','True','False','False','True'],
+    'Play': [0,0,1,1,1,0,1,0,1,0]
+}
+df = pd.DataFrame(data)
+
+# 2. Convert categorical variables to numeric using one-hot encoding
+X = pd.get_dummies(df.drop('Play', axis=1))
+y = df['Play']
+
+# 3. Split dataset into training and testing sets
+X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.3, random_state=0)
+
+# 4. Initialize and train Gaussian Naive Bayes model
+model = GaussianNB()
+model.fit(X_train, y_train)
+
+# 5. Make predictions
+y_pred = model.predict(X_test)
+
+# 6. Evaluate the model
+print("Accuracy:", accuracy_score(y_test, y_pred))
+print("\nConfusion Matrix:\n", confusion_matrix(y_test, y_pred))
+print("\nClassification Report:\n", classification_report(y_test, y_pred))
+---------------------------------------------------------------------------------------------------
+
+                    WITH CSV
+
+1.
+
+import pandas as pd
+import numpy as np
+from sklearn.linear_model import LinearRegression
+from sklearn.preprocessing import PolynomialFeatures
+import matplotlib.pyplot as plt
+
+# READ CSV
+df = pd.read_csv("Salary_positions.csv")
+
+X = df[['Level']]
+y = df['Salary']
+
+
+# SIMPLE LINEAR REGRESSION
+
+lin_reg = LinearRegression()
+lin_reg.fit(X, y)
+
+
+# POLYNOMIAL REGRESSION
+
+poly = PolynomialFeatures(degree=4)
+X_poly = poly.fit_transform(X)
+
+poly_reg = LinearRegression()
+poly_reg.fit(X_poly, y)
+
+
+# PREDICT LEVEL 11 & 12
+
+level_11 = poly.transform([[11]])
+level_12 = poly.transform([[12]])
+
+print("Linear Regression Prediction (Level 11):", lin_reg.predict([[11]])[0])
+print("Linear Regression Prediction (Level 12):", lin_reg.predict([[12]])[0])
+
+print("Polynomial Regression Prediction (Level 11):", poly_reg.predict(level_11)[0])
+print("Polynomial Regression Prediction (Level 12):", poly_reg.predict(level_12)[0])
+
+# VISUALIZATION
+
+plt.scatter(X, y, color='blue', label="Actual Data")
+plt.plot(X, lin_reg.predict(X), color='red', label="Linear Fit")
+plt.plot(X, poly_reg.predict(X_poly), color='green', label="Polynomial Fit (degree 4)")
+plt.xlabel("Level")
+plt.ylabel("Salary")
+plt.legend()
+plt.show()
+--------------------------------------------------
+  2.
+
+  import pandas as pd
+from sklearn.model_selection import train_test_split
+from sklearn.preprocessing import LabelEncoder
+from sklearn.naive_bayes import GaussianNB
+from sklearn.metrics import accuracy_score
+
+# READ CSV
+df = pd.read_csv("weather.csv")
+
+print(df.head())
+
+# --------------------------
+# Convert categorical → numeric
+# --------------------------
+le = LabelEncoder()
+
+df['Outlook'] = le.fit_transform(df['Outlook'])
+df['Temperature'] = le.fit_transform(df['Temperature'])
+df['Humidity'] = le.fit_transform(df['Humidity'])
+df['Windy'] = le.fit_transform(df['Windy'])
+df['Play'] = le.fit_transform(df['Play'])
+
+X = df[['Outlook', 'Temperature', 'Humidity', 'Windy']]
+y = df['Play']
+
+# --------------------------
+# Train-test split
+# --------------------------
+X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.3, random_state=0)
+
+# --------------------------
+# Naive Bayes model
+# --------------------------
+nb = GaussianNB()
+nb.fit(X_train, y_train)
+
+# --------------------------
+# Prediction & Accuracy
+# --------------------------
+y_pred = nb.predict(X_test)
+print("Accuracy:", accuracy_score(y_test, y_pred))
+
+print("Predictions:", y_pred)
