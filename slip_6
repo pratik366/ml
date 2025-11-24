@@ -67,3 +67,29 @@ plt.show()
 
 # Display the data with assigned clusters
 print(df)
+----------------------------------------------------------------------------------------
+WITH CSV
+
+1.
+import pandas as pd
+from sklearn.cluster import KMeans
+
+# Step 1: Read dataset
+df = pd.read_csv("employees.csv")
+
+# Step 2: Preprocessing – remove missing values
+df = df.dropna()
+
+# Step 3: Select features for clustering
+# (You can use only Salary or more columns)
+X = df[["Salary", "Experience"]]
+
+# Step 4: Apply K-means with 3 clusters
+kmeans = KMeans(n_clusters=3)
+kmeans.fit(X)
+
+# Step 5: Add cluster labels to dataset
+df["Income_Group"] = kmeans.labels_
+
+# Step 6: Print first few rows
+print(df.head())
