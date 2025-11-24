@@ -1,0 +1,184 @@
+1.
+import pandas as pd
+from sklearn.model_selection import train_test_split
+from sklearn.metrics import accuracy_score
+from sklearn.ensemble import RandomForestClassifier, GradientBoostingClassifier, VotingClassifier, StackingClassifier
+from sklearn.linear_model import LogisticRegression
+
+# 1. Load dataset (replace with your CSV path)
+# df = pd.read_csv("diabetes.csv")
+# Sample dummy dataset
+df = pd.DataFrame({
+    'Pregnancies':[6,1,8,1,0,5,3,10,2,4],
+    'Glucose':[148,85,183,89,137,116,78,115,95,140],
+    'BloodPressure':[72,66,64,66,40,74,50,0,60,70],
+    'BMI':[33.6,26.6,23.3,28.1,43.1,25.6,31.0,35.3,30,32],
+    'Age':[50,31,32,21,33,30,26,29,40,38],
+    'Outcome':[1,0,1,0,1,0,1,0,0,1]
+})
+
+X = df.drop('Outcome', axis=1)
+y = df['Outcome']
+
+X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.3, random_state=42)
+
+# 2. Bagging (Random Forest)
+rf = RandomForestClassifier(n_estimators=50, random_state=42)
+rf.fit(X_train, y_train)
+y_rf = rf.predict(X_test)
+
+# 3. Boosting (Gradient Boosting)
+gb = GradientBoostingClassifier(n_estimators=50, random_state=42)
+gb.fit(X_train, y_train)
+y_gb = gb.predict(X_test)
+
+# 4. Voting Classifier
+voting = VotingClassifier(estimators=[('rf', rf), ('gb', gb), ('lr', LogisticRegression())], voting='hard')
+voting.fit(X_train, y_train)
+y_v = voting.predict(X_test)
+
+# 5. Stacking Classifier
+stack = StackingClassifier(estimators=[('rf', rf), ('gb', gb)], final_estimator=LogisticRegression())
+stack.fit(X_train, y_train)
+y_s = stack.predict(X_test)
+
+# 6. Compare accuracy
+print("Random Forest Accuracy:", accuracy_score(y_test, y_rf))
+print("Gradient Boosting Accuracy:", accuracy_score(y_test, y_gb))
+print("Voting Classifier Accuracy:", accuracy_score(y_test, y_v))
+print("Stacking Classifier Accuracy:", accuracy_score(y_test, y_s))
+----------------------------------------------------------------*----
+2.
+import pandas as pd
+from sklearn.model_selection import train_test_split
+from sklearn.linear_model import LinearRegression
+from sklearn.metrics import mean_squared_error, r2_score
+
+# Sample data (or use: df = pd.read_csv("house_prices.csv"))
+df = pd.DataFrame({
+    'size':[1500,2000,2500,1800,3000,3500,4000],
+    'bedrooms':[3,4,4,3,5,5,6],
+    'age':[10,15,20,15,5,8,6],
+    'price':[300000,400000,500000,380000,600000,700000,800000]
+})
+
+X, y = df[['size','bedrooms','age']], df['price']
+X_train,X_test,y_train,y_test = train_test_split(X,y,test_size=0.2,random_state=0)
+
+model = LinearRegression().fit(X_train,y_train)
+y_pred = model.predict(X_test)
+
+print("MSE:", mean_squared_error(y_test,y_pred))
+print("R²:", r2_score(y_test,y_pred))
+print("Predicted Prices:", y_pred)
+
+------------------------------------------------------------------------------
+
+                                WITH CSV
+
+1.
+import pandas as pd
+from sklearn.model_selection import train_test_split
+from sklearn.ensemble import RandomForestClassifier, AdaBoostClassifier, VotingClassifier, StackingClassifier
+from sklearn.linear_model import LogisticRegression
+from sklearn.svm import SVC
+from sklearn.metrics import accuracy_score
+
+# ------------------------------
+# Read Pima Diabetes CSV
+# ------------------------------
+df = pd.read_csv("pima_diabetes.csv")   # Make sure file name is correct
+
+# Features & Target
+X = df.drop("Outcome", axis=1)
+y = df["Outcome"]
+
+# Train-test split
+X_train, X_test, y_train, y_test = train_test_split(
+    X, y, test_size=0.3, random_state=42
+)
+
+# ------------------------------
+# 1. Bagging (Random Forest)
+# ------------------------------
+rf = RandomForestClassifier()
+rf.fit(X_train, y_train)
+pred_rf = rf.predict(X_test)
+print("Random Forest Accuracy:", accuracy_score(y_test, pred_rf))
+
+# ------------------------------
+# 2. Boosting (AdaBoost)
+# ------------------------------
+ada = AdaBoostClassifier()
+ada.fit(X_train, y_train)
+pred_ada = ada.predict(X_test)
+print("AdaBoost Accuracy:", accuracy_score(y_test, pred_ada))
+
+# ------------------------------
+# 3. Voting Classifier (Hard Voting)
+# ------------------------------
+log_clf = LogisticRegression(max_iter=1000)
+svc_clf = SVC(probability=True)
+rf_clf  = RandomForestClassifier()
+
+voting = VotingClassifier(
+    estimators=[('lr', log_clf), ('svc', svc_clf), ('rf', rf_clf)],
+    voting='hard'
+)
+
+voting.fit(X_train, y_train)
+pred_voting = voting.predict(X_test)
+print("Voting Classifier Accuracy:", accuracy_score(y_test, pred_voting))
+
+# ------------------------------
+# 4. Stacking Classifier
+# ------------------------------
+stack_model = StackingClassifier(
+    estimators=[('lr', log_clf), ('svc', svc_clf)],
+    final_estimator=RandomForestClassifier()
+)
+
+stack_model.fit(X_train, y_train)
+pred_stack = stack_model.predict(X_test)
+print("Stacking Accuracy:", accuracy_score(y_test, pred_stack))
+
+# ------------------------------
+# Comparison Summary
+# ------------------------------
+print("\n--- Accuracy Comparison ---")
+print("Bagging  (Random Forest):", accuracy_score(y_test, pred_rf))
+print("Boosting (AdaBoost)     :", accuracy_score(y_test, pred_ada))
+print("Voting                  :", accuracy_score(y_test, pred_voting))
+print("Stacking                :", accuracy_score(y_test, pred_stack))
+
+--------------------------------------
+2.
+import pandas as pd
+from sklearn.model_selection import train_test_split
+from sklearn.linear_model import LinearRegression
+
+# Read CSV dataset
+df = pd.read_csv("house_prices.csv")
+
+# Independent variables (example: Size, Rooms, Age)
+X = df[['Size', 'Rooms', 'Age']]   # change columns as needed
+y = df['Price']
+
+# Train-test split
+X_train, X_test, y_train, y_test = train_test_split(
+    X, y, test_size=0.3, random_state=42
+)
+
+# Multiple Linear Regression
+model = LinearRegression()
+model.fit(X_train, y_train)
+
+# Prediction on test data
+y_pred = model.predict(X_test)
+print("Predicted Prices:\n", y_pred)
+
+# Example prediction:
+print("Price of a house (Size=1200,Rooms=3,Age=5):",
+      model.predict([[1200, 3, 5]])[0])
+
+    
