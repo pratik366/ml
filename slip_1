@@ -47,3 +47,51 @@ plt.xlabel("Sepal Length (cm)")
 plt.ylabel("Petal Length (cm)")
 plt.legend(title="Species")
 plt.show()
+------------------------------------------------------------------------------
+
+WITH CSV
+
+1.
+import pandas as pd
+from mlxtend.preprocessing import TransactionEncoder
+from mlxtend.frequent_patterns import apriori, association_rules
+
+# Step 1: Read CSV
+df = pd.read_csv("groceries.csv", header=None)
+
+# Convert rows into list of items
+transactions = df.values.tolist()
+
+# Step 2: Encode items as True/False matrix
+te = TransactionEncoder()
+te_data = te.fit(transactions).transform(transactions)
+df_encoded = pd.DataFrame(te_data, columns=te.columns_)
+
+# Step 3: Apply Apriori (min support = 0.25)
+frequent_items = apriori(df_encoded, min_support=0.25, use_colnames=True)
+
+# Step 4: Generate rules
+rules = association_rules(frequent_items, metric="confidence", min_threshold=0.5)
+
+print("Frequent Itemsets:")
+print(frequent_items)
+
+print("\nAssociation Rules:")
+print(rules)
+------------------------------
+2.
+import pandas as pd
+import matplotlib.pyplot as plt
+
+# Step 1: Read iris CSV
+df = pd.read_csv("iris.csv")
+
+# Step 2: Convert categorical Species → numeric
+df["Species"] = df["Species"].astype("category").cat.codes
+
+# Step 3: Scatter Plot
+plt.scatter(df["PetalLengthCm"], df["PetalWidthCm"])
+plt.xlabel("Petal Length")
+plt.ylabel("Petal Width")
+plt.title("Scatter Plot of Iris Dataset")
+plt.show()
