@@ -28,7 +28,7 @@ print("MSE:", mean_squared_error(y_test,y_pred))
 print("R²:", r2_score(y_test,y_pred))
 print("Predicted CO2 Emissions:", y_pred)
 
---------------------------------------------------------------------------------------------------------------------
+------------------
 2.
  ##Write a python program to implement k-nearest Neighbors ML algorithm to build 
 ##prediction model (Use iris Dataset) 
@@ -53,3 +53,35 @@ knn.fit(X_train, y_train)
 y_pred = knn.predict(X_test)
 print("Accuracy:", accuracy_score(y_test, y_pred))
 print("Predicted Species:", y_pred)
+
+--------------------------------------------------------------------------------------------------------------------
+WITH CSV
+
+1.
+import pandas as pd
+from sklearn.model_selection import train_test_split
+from sklearn.linear_model import LinearRegression
+
+# Step 1: Read dataset
+df = pd.read_csv("fuel_consumption.csv")
+
+# Step 2: Select multiple features (independent variables)
+X = df[["Engine_Size", "Cylinders", "Fuel_Consumption"]]  
+
+# Step 3: Target variable (dependent variable)
+y = df["CO2_Emissions"]
+
+# Step 4: Split dataset into training and testing sets
+X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.2)
+
+# Step 5: Create model
+model = LinearRegression()
+
+# Step 6: Train model
+model.fit(X_train, y_train)
+
+# Step 7: Predict and show results
+pred = model.predict(X_test)
+
+print("Predicted CO2 Emissions:", pred)
+print("Model Accuracy (R2 Score):", model.score(X_test, y_test))
